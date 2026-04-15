@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cahier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0e0e0e;
+      --surface:  #161616;
+      --border:   #2a2a2a;
+      --text:     #e8e3d8;
+      --muted:    #6b6660;
+      --accent:   #c9b99a;
+      --accent2:  #7a6e5f;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 배경 노이즈 텍스처 */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── 레이아웃 ── */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── 헤더 ── */
+    header {
+      padding: 6rem 0 4rem;
+      border-bottom: 1px solid var(--border);
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.6rem;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3.2rem, 8vw, 5.5rem);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .tagline {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-top: 1.4rem;
+      line-height: 1.8;
+    }
+
+    /* ── 다운로드 버튼 ── */
+    .dl-wrap {
+      margin-top: 2.8rem;
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-dl {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--accent);
+      color: #0e0e0e;
+      text-decoration: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      padding: 0.75rem 1.6rem;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-dl:hover {
+      background: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .btn-dl svg { flex-shrink: 0; }
+
+    .version-tag {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── 기능 목록 ── */
+    .features {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 2rem;
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .feat-item {
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 0.8rem;
+    }
+
+    .feat-item:nth-child(odd) { padding-right: 2rem; border-right: 1px solid var(--border); }
+    .feat-item:nth-child(even) { padding-left: 2rem; }
+
+    .feat-key {
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      padding: 0.1rem 0.4rem;
+    }
+
+    .feat-desc {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── 정보 ── */
+    .info {
+      padding: 4rem 0;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+    }
+
+    .info-row:first-child { border-top: none; }
+
+    .info-key { color: var(--muted); }
+    .info-val { color: var(--text); }
+    .info-val a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .info-val a:hover { border-color: var(--accent); }
+
+    /* ── 푸터 ── */
+    footer {
+      padding: 2.5rem 0;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── 애니메이션 ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      .feat-grid { grid-template-columns: 1fr; }
+      .feat-item:nth-child(odd) { padding-right: 0; border-right: none; }
+      .feat-item:nth-child(even) { padding-left: 0; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">windows · 텍스트 편집기</p>
+    <h1>ca<em>hi</em>er</h1>
+    <p class="tagline">
+      군더더기 없는 메모장.<br>
+      한글 IME 완전 지원 · PyQt6 기반.
+    </p>
+    <div class="dl-wrap">
+      <a class="btn-dl" href="https://github.com/govin08/cahier/releases/latest/download/cahier.exe">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        다운로드 · .exe
+      </a>
+      <span class="version-tag">v3.0 · Windows x64</span>
+    </div>
+  </header>
+
+  <section class="features">
+    <p class="section-label">기능</p>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <span class="feat-key">Ctrl+N</span>
+        <span class="feat-desc">새 파일</span>
+      </div>
+      <div class="feat-item">
+        <span class="feat-key">Ctrl+O</span>
+        <span class="feat-desc">파일 열기</span>
+      </div>
+      <div class="feat-item">
+        <span class="feat-key">Ctrl+S</span>
+        <span class="feat-desc">저장</span>
+      </div>
+      <div class="feat-item">
+        <span class="feat-key">Ctrl+Z/Y</span>
+        <span class="feat-desc">실행취소 / 다시실행</span>
+      </div>
+      <div class="feat-item">
+        <span class="feat-key">Ctrl+F</span>
+        <span class="feat-desc">찾기</span>
+      </div>
+      <div class="feat-item">
+        <span class="feat-key">Ctrl+R</span>
+        <span class="feat-desc">찾기 / 바꾸기</span>
+      </div>
+      <div class="feat-item">
+        <span class="feat-key">Ctrl++/-</span>
+        <span class="feat-desc">확대 / 축소</span>
+      </div>
+      <div class="feat-item">
+        <span class="feat-key">Ctrl+휠</span>
+        <span class="feat-desc">마우스로 줌</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="info">
+    <p class="section-label">정보</p>
+    <div class="info-row">
+      <span class="info-key">버전</span>
+      <span class="info-val">v3.0</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">플랫폼</span>
+      <span class="info-val">Windows 10 / 11</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">설치</span>
+      <span class="info-val">불필요 · 단일 실행 파일</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">소스</span>
+      <span class="info-val">
+        <a href="https://github.com/govin08/cahier" target="_blank">github.com/govin08/cahier</a>
+      </span>
+    </div>
+  </section>
+
+  <footer>
+    <span>cahier</span>
+    <span>govin08 · 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>
