@@ -251,12 +251,6 @@
       <span class="version-tag" id="dl-count"></span>
     </div>
     <script>
-    fetch('https://api.github.com/repos/govin08/cahier/releases/latest')
-      .then(r => r.json())
-      .then(data => {
-        const count = data.assets[0].download_count;
-        document.getElementById('dl-count').textContent = count + '회 다운로드';
-      });
     fetch('https://api.github.com/repos/govin08/cahier/releases')
       .then(r => r.json())
       .then(data => {
